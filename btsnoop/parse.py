@@ -32,16 +32,17 @@ def parseBTSnoop( filename ):
         # bit 1 ... 0 = data, 1 = command/event
         if startTime is None:
             startTime = time64
-        print flags, ((time64-startTime)/1000)/1000.
+#        print flags, ((time64-startTime)/1000)/1000.
         data = f.read(origLen)
         assert len(data) == origLen, (len(data), origLen)
         if flags == 0:
             tmp = [ord(x) for x in data]
             assert tmp[:3] == [0x2, 0x40, 0x20,]
+            # well tmp[3] it is the lengh of data (maybe 16bit?)
             assert tmp[3] in [0x9, 0xa, 0xb,0xd, 0x11, 0x16, 0x18, 0x1a, 0x1b] , hex(tmp[3])
-            if tmp[3] == 0x9:
-                assert len(tmp) == 14, len(tmp)
-                print [hex(x) for x in tmp]
+            assert len(tmp)-5 == tmp[3], (len(tmp), tmp[3])
+            assert tmp[4] == 0, tmp[4]
+            print [hex(x) for x in tmp[5:]]
         i += 1
     print "Records", i
 
