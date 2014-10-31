@@ -18,17 +18,30 @@ def parseBTSnoop( filename ):
     assert datalinkType == 0x3EA, datalinkType # no idea
 
     i = 0
+    startTime = None
     while True:
         header = f.read(4*6)
         if len(header) < 24:
             break
-        origLen, incLen, packetFlags, drops, timeSec, timeMs = struct.unpack( 
-                ">IIIIII", header )
+        origLen, incLen, flags, drops, time64 = struct.unpack( 
+                ">IIIIq", header )
         assert origLen == incLen, (origLen, incLen)
         assert drops == 0, drops
-        assert packetFlags in [0,1,2,3], (i,packetFlags)
-        print packetFlags, timeSec, timeMs
-        print [hex(ord(x)) for x in f.read(origLen)]
+        assert flags in [0,1,2,3], (i,flags)
+        # bit 0 ... 0 = sent, 1 = received
+        # bit 1 ... 0 = data, 1 = command/event
+        if startTime is None:
+            startTime = time64
+        print flags, ((time64-startTime)/1000)/1000.
+        data = f.read(origLen)
+        assert len(data) == origLen, (len(data), origLen)
+        if flags == 0:
+            tmp = [ord(x) for x in data]
+            assert tmp[:3] == [0x2, 0x40, 0x20,]
+            assert tmp[3] in [0x9, 0xa, 0xb,0xd, 0x11, 0x16, 0x18, 0x1a, 0x1b] , hex(tmp[3])
+            if tmp[3] == 0x9:
+                assert len(tmp) == 14, len(tmp)
+                print [hex(x) for x in tmp]
         i += 1
     print "Records", i
 
