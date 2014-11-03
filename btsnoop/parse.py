@@ -38,7 +38,6 @@ def parseBTSnoop( filename ):
             tmp = [ord(x) for x in data]
             assert tmp[:3] == [0x2, 0x40, 0x20,]
             # well tmp[3] it is the lengh of data (maybe 16bit?)
-            assert tmp[3] in [0x9, 0xa, 0xb,0xd, 0x11, 0x16, 0x18, 0x1a, 0x1b] , hex(tmp[3])
             assert len(tmp)-5 == tmp[3], (len(tmp), tmp[3])
             assert tmp[4] == 0, tmp[4]
             assert len(tmp)-9 == tmp[5], (len(tmp), tmp[5])
