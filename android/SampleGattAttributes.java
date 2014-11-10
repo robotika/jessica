@@ -48,18 +48,20 @@ public class SampleGattAttributes {
         attributes.put("9a66fd51-0800-9191-11e4-012d1540cb8e", "Parrot Service - D51");
 
         // Parrot minidrone Rolling Spider specific characteristics
-        attributes.put("9a66fa01-0800-9191-11e4-012d1540cb8e", "Parrot - A01"); // + complete range to A1F
-        attributes.put("9a66fa0a-0800-9191-11e4-012d1540cb8e", "Parrot - Power Motors");
-        attributes.put("9a66fa1f-0800-9191-11e4-012d1540cb8e", "Parrot - A1F");
+        attributes.put("9a66fa01-0800-9191-11e4-012d1540cb8e", "Parrot - A01"); // + complete range to A1F (handle 0x22 - 0x7F)
+        attributes.put("9a66fa0a-0800-9191-11e4-012d1540cb8e", "Parrot - Power Motors");     // handle 0x40
+        attributes.put("9a66fa0b-0800-9191-11e4-012d1540cb8e", "Parrot - set numbers T?");   // handle 0x43
+        attributes.put("9a66fa1e-0800-9191-11e4-012d1540cb8e", "Parrot - init count 1..20"); // handle 0x7C
+        attributes.put("9a66fa1f-0800-9191-11e4-012d1540cb8e", "Parrot - A1F");              // handle 0x7F
         attributes.put("9a66fb01-0800-9191-11e4-012d1540cb8e", "Parrot - B01"); // + complete range to B1F
         attributes.put("9a66fb1f-0800-9191-11e4-012d1540cb8e", "Parrot - B1F");
-        attributes.put("9a66ffc1-0800-9191-11e4-012d1540cb8e", "Parrot - FC1");
-        attributes.put("9a66fd22-0800-9191-11e4-012d1540cb8e", "Parrot - D22");
-        attributes.put("9a66fd23-0800-9191-11e4-012d1540cb8e", "Parrot - D23");
-        attributes.put("9a66fd24-0800-9191-11e4-012d1540cb8e", "Parrot - D24");
-        attributes.put("9a66fd52-0800-9191-11e4-012d1540cb8e", "Parrot - D52");
-        attributes.put("9a66fd53-0800-9191-11e4-012d1540cb8e", "Parrot - D53");
-        attributes.put("9a66fd54-0800-9191-11e4-012d1540cb8e", "Parrot - D54");
+        attributes.put("9a66ffc1-0800-9191-11e4-012d1540cb8e", "Parrot - FC1"); // handle 0x102
+        attributes.put("9a66fd22-0800-9191-11e4-012d1540cb8e", "Parrot - D22"); // handle 0x112
+        attributes.put("9a66fd23-0800-9191-11e4-012d1540cb8e", "Parrot - D23"); // handle 0x115
+        attributes.put("9a66fd24-0800-9191-11e4-012d1540cb8e", "Parrot - D24"); // handle 0x118
+        attributes.put("9a66fd52-0800-9191-11e4-012d1540cb8e", "Parrot - D52"); // handle 0x122
+        attributes.put("9a66fd53-0800-9191-11e4-012d1540cb8e", "Parrot - D53"); // handle 0x125
+        attributes.put("9a66fd54-0800-9191-11e4-012d1540cb8e", "Parrot - D54"); // handle 0x128
     }
 
     public static String lookup(String uuid, String defaultName) {
