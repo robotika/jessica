@@ -61,6 +61,7 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private TourTheStairs mTourTheStairs;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -126,8 +127,18 @@ public class DeviceControlActivity extends Activity {
                         final BluetoothGattCharacteristic characteristic =
                                 mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
-                        TourTheStairs tts = new TourTheStairs( mBluetoothLeService, mGattCharacteristics );
-                        tts.start();
+
+                        // abuse A01 characteristics for start/stop Tour-the-Stairs thread
+                        if( characteristic.getUuid().toString().equals("9a66fa01-0800-9191-11e4-012d1540cb8e") ) {
+                            if( mTourTheStairs == null ) {
+                                mTourTheStairs = new TourTheStairs( mBluetoothLeService, mGattCharacteristics );
+                                mTourTheStairs.start();
+                            }
+                            else {
+                                mTourTheStairs.requestStop();
+                            }
+                            return true;
+                        }
 
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                             // If there is an active notification on a characteristic, clear

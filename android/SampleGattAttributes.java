@@ -48,7 +48,7 @@ public class SampleGattAttributes {
         attributes.put("9a66fd51-0800-9191-11e4-012d1540cb8e", "Parrot Service - D51");
 
         // Parrot minidrone Rolling Spider specific characteristics
-        attributes.put("9a66fa01-0800-9191-11e4-012d1540cb8e", "Parrot - A01"); // + complete range to A1F (handle 0x22 - 0x7F)
+        attributes.put("9a66fa01-0800-9191-11e4-012d1540cb8e", "Tour the Stairs/Parrot - A01"); // + complete range to A1F (handle 0x22 - 0x7F)
         attributes.put("9a66fa0a-0800-9191-11e4-012d1540cb8e", "Parrot - Power Motors");     // handle 0x40
         attributes.put("9a66fa0b-0800-9191-11e4-012d1540cb8e", "Parrot - Date/Time");   // handle 0x43, 1:2014-10-29, 2:T223238+0100, 3:0x0
 
