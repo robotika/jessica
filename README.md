@@ -10,3 +10,5 @@ Parrot minidrone Rolling Spider
 References at
 http://robotika.cz/robots/jessica/
 
+The first spin video
+https://www.youtube.com/watch?v=4jyffZZ1At0

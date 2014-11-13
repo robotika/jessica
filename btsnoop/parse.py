@@ -6,6 +6,10 @@
 import sys
 import struct
 
+def hexStr( arr ):
+    "hexdump of byte array"
+    return " ".join( ["%02X" % x for x in arr] )
+
 def parseBTSnoop( filename ):
     # hints taken "Snoop Version 2 Packet Capture File Format"
     #  from http://tools.ietf.org/html/rfc1761
@@ -36,6 +40,8 @@ def parseBTSnoop( filename ):
         assert len(data) == origLen, (len(data), origLen)
         if flags == 0:
             tmp = [ord(x) for x in data]
+            t = ((time64-startTime)/1000)/1000.
+            print "%.03f" % t, hexStr( tmp )
             assert tmp[:3] == [0x2, 0x40, 0x20,]
             # well tmp[3] it is the lengh of data (maybe 16bit?)
             assert len(tmp)-5 == tmp[3], (len(tmp), tmp[3])
@@ -46,8 +52,12 @@ def parseBTSnoop( filename ):
 #            print [hex(x) for x in tmp[5:]]
             if tmp[5] == 0x12:
                 # looks like it is similar to AR Drone2 AT*PCMD
-                assert tmp[5:5+8] == [0x12, 0x0, 0x4, 0x0, 0x52, 0x40, 0x0, 0x2]
+                assert tmp[5:5+8] == [0x12, 0x0, 0x4, 0x0, 0x52, 0x40, 0x0, 0x2], tmp[5:5+8]
                 print struct.unpack("=BHHBhhf", data[5+8:])
+#        else:
+#            print "%d:"%flags, hexStr( [ord(x) for x in data] )
+#        elif flags == 1:
+#            print "In:", [hex(ord(x)) for x in data]
         i += 1
     print "Records", i
 
