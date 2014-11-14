@@ -130,7 +130,7 @@ public class DeviceControlActivity extends Activity {
 
                         // abuse A01 characteristics for start/stop Tour-the-Stairs thread
                         if( characteristic.getUuid().toString().equals("9a66fa01-0800-9191-11e4-012d1540cb8e") ) {
-                            if( mTourTheStairs == null ) {
+                            if( mTourTheStairs == null || mTourTheStairs.completed() ) {
                                 mTourTheStairs = new TourTheStairs( mBluetoothLeService, mGattCharacteristics );
                                 mTourTheStairs.start();
                             }

@@ -32,7 +32,7 @@ public class TourTheStairs extends Thread {
 
     public void init() {
         // note at at least BD characteristics notification is "must have" otherwise it does not start
-        mBluetoothLeService.setCharacteristicNotification( uuid2characteristics("9a66fb0e-0800-9191-11e4-012d1540cb8e"), true );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb0e-0800-9191-11e4-012d1540cb8e"), true);
         // TODO start all available notifications
 
         for( int i=0; i < 20; i++){
@@ -52,7 +52,7 @@ public class TourTheStairs extends Thread {
         }
     }
 
-    public void sendMotorCmd( Boolean on ) {
+    public void sendMotorCmd( Boolean on, int forward, int turn, int up ) {
         // TODO replace by speed and direction parameters
         BluetoothGattCharacteristic characteristics;
         characteristics = uuid2characteristics("9a66fa0a-0800-9191-11e4-012d1540cb8e"); // handle 0x40
@@ -63,19 +63,21 @@ public class TourTheStairs extends Thread {
         value[3] = (byte) (0);
         value[4] = (byte) (2);
         value[5] = (byte) (0);
-        // 6 is on/off, see in the switch below
-        value[7] = (byte) (0);
-        value[8] = (byte) (0);
-        value[9] = (byte) (0);
-        value[10] = (byte) (0);
         if (on) {
             value[6] = (byte) (1);
+        } else {
+            value[6] = (byte) (0);
+        }
+        value[7] = (byte) (forward & 0xFF);
+        value[8] = (byte) ((forward >> 8) & 0xFF);
+        value[9] = (byte) (turn & 0xFF);
+        value[10] = (byte) (up & 0xFF);
+        if (on) {
             value[11] = (byte) (223);
             value[12] = (byte) (177);
             value[13] = (byte) (139);
             value[14] = (byte) (67);
         } else {
-            value[6] = (byte) (0);
             value[11] = (byte) (0);
             value[12] = (byte) (0);
             value[13] = (byte) (0);
@@ -91,22 +93,29 @@ public class TourTheStairs extends Thread {
         mMotorCounter++;
     }
 
-    public void runMotors() {
-        for( int i=1; i < 255; i++) {
-            sendMotorCmd( (i > 30 && i < 50) );
-            if( !mShouldRun )
-                return;
+    public Boolean motors( Boolean on, int forward, int turn, int up, int steps ) {
+        for( int i=0; i < steps; i++) {
+            sendMotorCmd( on, forward, turn, up );
+            if( !mShouldRun ) {
+                sendMotorCmd( false, 0, 0, 0 ); // stop it
+                return false; // TODO replace by exception
+            }
         }
-        sendMotorCmd( false ); // stop it
+        return true;
     }
 
     public void requestStop() {
         mShouldRun = false;
     }
 
-    public void run() {
-        init();
-        runMotors();
+    public Boolean completed() {
+        return !mShouldRun;
     }
 
+    public void run() {
+        init();
+        if( !motors( true, 8000, 0, 0, 50 ) ) return;
+        if( !motors( true, 100, 0, 100, 30 ) ) return; // full power up, slightly forward
+        return;
+    }
 }
