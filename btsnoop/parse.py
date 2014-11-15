@@ -53,9 +53,9 @@ def parseBTSnoop( filename ):
             if tmp[5] == 0x12:
                 # looks like it is similar to AR Drone2 AT*PCMD
                 assert tmp[5:5+8] == [0x12, 0x0, 0x4, 0x0, 0x52, 0x40, 0x0, 0x2], tmp[5:5+8]
-                # BHH unknown, B=on/off, h=forward/backward, B=right/left, B=up/down, f unknown
-                # right/left, up/down are in interval -100..100
-                print struct.unpack("=BHHBhBBf", data[5+8:]) 
+                # BHH unknown, B=on/off, forward/backward, tilt left/right, turn right/left, up/down, f multiply?
+                # all signed byte values are in interval -100..100
+                print struct.unpack("=BHHBbbbbf", data[5+8:]) 
 #        else:
 #            print "%d:"%flags, hexStr( [ord(x) for x in data] )
 #        elif flags == 1:
