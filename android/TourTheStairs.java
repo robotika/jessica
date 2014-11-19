@@ -2,8 +2,11 @@ package com.example.android.bluetoothlegatt;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.lang.Thread;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 
 /**
  * Created by martind on 11/12/2014.
@@ -52,38 +55,42 @@ public class TourTheStairs extends Thread {
         }
     }
 
-    public void sendMotorCmd( Boolean on, int forward, int turn, int up ) {
+    public void sendMotorCmd( Boolean on, int tilt, int forward, int turn, int up, float scale ) {
         // TODO replace by speed and direction parameters
         BluetoothGattCharacteristic characteristics;
         characteristics = uuid2characteristics("9a66fa0a-0800-9191-11e4-012d1540cb8e"); // handle 0x40
-        byte[] value = new byte[15];
-        value[0] = (byte) (2);
-        value[1] = (byte) (mMotorCounter);
-        value[2] = (byte) (2);
-        value[3] = (byte) (0);
-        value[4] = (byte) (2);
-        value[5] = (byte) (0);
-        if (on) {
-            value[6] = (byte) (1);
-        } else {
-            value[6] = (byte) (0);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream packet = new DataOutputStream( stream );
+        try {
+            packet.writeByte( 2 );
+            packet.writeByte( (byte)mMotorCounter );
+            packet.writeByte( 2 );
+            packet.writeByte( 0 );
+            packet.writeByte( 2 );
+            packet.writeByte( 0 );
+            if (on) {
+                packet.writeByte( 1 );
+            } else {
+                packet.writeByte( 0 );
+            }
+            // is byte casting necessary???
+            packet.writeByte( (byte) (tilt & 0xFF) );
+            packet.writeByte( (byte) (forward & 0xFF) );
+            packet.writeByte( (byte) (turn & 0xFF) );
+            packet.writeByte( (byte) (up & 0xFF) );
+            packet.writeFloat( scale ); // well, but I need different endian :(
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        value[7] = (byte) (forward & 0xFF);
-        value[8] = (byte) ((forward >> 8) & 0xFF);
-        value[9] = (byte) (turn & 0xFF);
-        value[10] = (byte) (up & 0xFF);
-        if (on) {
-            value[11] = (byte) (223);
-            value[12] = (byte) (177);
-            value[13] = (byte) (139);
-            value[14] = (byte) (67);
-        } else {
-            value[11] = (byte) (0);
-            value[12] = (byte) (0);
-            value[13] = (byte) (0);
-            value[14] = (byte) (0);
-        }
-        characteristics.setValue(value);
+        byte [] tmpArr = stream.toByteArray();
+        byte tmp;
+        tmp = tmpArr[11]; // temporary hack - swapping float ordering
+        tmpArr[11] = tmpArr[14];
+        tmpArr[14] = tmp;
+        tmp = tmpArr[12];
+        tmpArr[12] = tmpArr[13];
+        tmpArr[13] = tmp;
+        characteristics.setValue( tmpArr );
         mBluetoothLeService.writeCharacteristic(characteristics);
         try {
             Thread.sleep(50);
@@ -93,11 +100,11 @@ public class TourTheStairs extends Thread {
         mMotorCounter++;
     }
 
-    public Boolean motors( Boolean on, int forward, int turn, int up, int steps ) {
+    public Boolean motors( Boolean on, int tilt, int forward, int turn, int up, float scale, int steps ) {
         for( int i=0; i < steps; i++) {
-            sendMotorCmd( on, forward, turn, up );
+            sendMotorCmd( on, tilt, forward, turn, up, scale );
             if( !mShouldRun ) {
-                sendMotorCmd( false, 0, 0, 0 ); // stop it
+                sendMotorCmd( false, 0, 0, 0, 0, 0.0f ); // stop it
                 return false; // TODO replace by exception
             }
         }
@@ -113,9 +120,12 @@ public class TourTheStairs extends Thread {
     }
 
     public void run() {
+        float scale = 279.3896179199219f;
         init();
-        if( !motors( true, 8000, 0, 0, 50 ) ) return;
-        if( !motors( true, 100, 0, 100, 30 ) ) return; // full power up, slightly forward
-        return;
+        if( !motors( true, 0, 50, 0, 0, scale, 20 ) ) return;
+        if( !motors( true, 0, 10, 0, 100, scale, 60 ) ) return; // full power up, slightly forward
+
+        motors( false, 0, 0, 0, 0, 0.0f, 1 ); // STOP
+        mShouldRun = false;
     }
 }
