@@ -59,7 +59,7 @@ public class TourTheStairs extends Thread {
     public void takeoff() {
         BluetoothGattCharacteristic characteristics;
         characteristics = uuid2characteristics("9a66fa0b-0800-9191-11e4-012d1540cb8e"); // handle 0x43
-        byte [] arr = { 2, (byte)mSettingsCounter, 2, 0, 1, 0 };
+        byte [] arr = { 4, (byte)mSettingsCounter, 2, 0, 1, 0 };
         characteristics.setValue( arr );
         mBluetoothLeService.writeCharacteristic(characteristics);
         try {
@@ -73,7 +73,7 @@ public class TourTheStairs extends Thread {
     public void land() {
         BluetoothGattCharacteristic characteristics;
         characteristics = uuid2characteristics("9a66fa0b-0800-9191-11e4-012d1540cb8e"); // handle 0x43
-        byte [] arr = { 2, (byte)mSettingsCounter, 2, 0, 3, 0 };
+        byte [] arr = { 4, (byte)mSettingsCounter, 2, 0, 3, 0 };
         characteristics.setValue( arr );
         mBluetoothLeService.writeCharacteristic(characteristics);
         try {
@@ -161,7 +161,7 @@ public class TourTheStairs extends Thread {
     public void run() {
         init();
         takeoff();
-        motors( false, 0, 50, 0, 0, 0.0f, 20 ); // it has to land anyway
+        motors( false, 0, 50, 0, 0, 0.0f, 10 ); // it has to land anyway
         land();
         motors( false, 0, 50, 0, 0, 0.0f, 20 );
         mShouldRun = false;
