@@ -17,6 +17,7 @@ public class TourTheStairs extends Thread {
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics;
     private Boolean mShouldRun = true;
     private int mMotorCounter = 1;
+    private int mSettingsCounter = 1;
 
     private final BluetoothGattCharacteristic uuid2characteristics(String myUuid) {
         for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
@@ -53,6 +54,34 @@ public class TourTheStairs extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void takeoff() {
+        BluetoothGattCharacteristic characteristics;
+        characteristics = uuid2characteristics("9a66fa0b-0800-9191-11e4-012d1540cb8e"); // handle 0x43
+        byte [] arr = { 2, (byte)mSettingsCounter, 2, 0, 1, 0 };
+        characteristics.setValue( arr );
+        mBluetoothLeService.writeCharacteristic(characteristics);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mSettingsCounter++;
+    }
+
+    public void land() {
+        BluetoothGattCharacteristic characteristics;
+        characteristics = uuid2characteristics("9a66fa0b-0800-9191-11e4-012d1540cb8e"); // handle 0x43
+        byte [] arr = { 2, (byte)mSettingsCounter, 2, 0, 3, 0 };
+        characteristics.setValue( arr );
+        mBluetoothLeService.writeCharacteristic(characteristics);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mSettingsCounter++;
     }
 
     public void sendMotorCmd( Boolean on, int tilt, int forward, int turn, int up, float scale ) {
@@ -119,13 +148,22 @@ public class TourTheStairs extends Thread {
         return !mShouldRun;
     }
 
-    public void run() {
+    public void run0() {
         float scale = 279.3896179199219f;
         init();
         if( !motors( true, 0, 50, 0, 0, scale, 20 ) ) return;
         if( !motors( true, 0, 10, 0, 100, scale, 60 ) ) return; // full power up, slightly forward
 
         motors( false, 0, 0, 0, 0, 0.0f, 1 ); // STOP
+        mShouldRun = false;
+    }
+
+    public void run() {
+        init();
+        takeoff();
+        motors( false, 0, 50, 0, 0, 0.0f, 20 ); // it has to land anyway
+        land();
+        motors( false, 0, 50, 0, 0, 0.0f, 20 );
         mShouldRun = false;
     }
 }
