@@ -18,6 +18,7 @@ public class TourTheStairs extends Thread {
     private Boolean mShouldRun = true;
     private int mMotorCounter = 1;
     private int mSettingsCounter = 1;
+    private int mEmergencyCounter = 1;
 
     private final BluetoothGattCharacteristic uuid2characteristics(String myUuid) {
         for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
@@ -84,6 +85,21 @@ public class TourTheStairs extends Thread {
         mSettingsCounter++;
     }
 
+    public void emergencyStop() {
+        // dangerous - stops all motors!
+        BluetoothGattCharacteristic characteristics;
+        characteristics = uuid2characteristics("9a66fa0c-0800-9191-11e4-012d1540cb8e"); // handle 0x46
+        byte [] arr = { 4, (byte)mEmergencyCounter, 2, 0, 4, 0 };
+        characteristics.setValue( arr );
+        mBluetoothLeService.writeCharacteristic(characteristics);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mEmergencyCounter++;
+    }
+
     public void sendMotorCmd( Boolean on, int tilt, int forward, int turn, int up, float scale ) {
         // TODO replace by speed and direction parameters
         BluetoothGattCharacteristic characteristics;
@@ -148,22 +164,14 @@ public class TourTheStairs extends Thread {
         return !mShouldRun;
     }
 
-    public void run0() {
+    public void run() {
         float scale = 279.3896179199219f;
         init();
-        if( !motors( true, 0, 50, 0, 0, scale, 20 ) ) return;
-        if( !motors( true, 0, 10, 0, 100, scale, 60 ) ) return; // full power up, slightly forward
-
-        motors( false, 0, 0, 0, 0, 0.0f, 1 ); // STOP
-        mShouldRun = false;
-    }
-
-    public void run() {
-        init();
         takeoff();
-        motors( false, 0, 50, 0, 0, 0.0f, 10 ); // it has to land anyway
-        land();
-        motors( false, 0, 50, 0, 0, 0.0f, 20 );
+        motors( false, 0, 0, 0, 0, 0.0f, 15 ); // it has to land anyway
+        if( !motors( true, 0, 100, 0, 0, scale, 6 ) ) return;
+        emergencyStop();
+        motors( false, 0, 0, 0, 0, 0.0f, 10 );
         mShouldRun = false;
     }
 }
