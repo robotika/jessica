@@ -57,7 +57,7 @@ public class SampleGattAttributes {
         attributes.put("9a66fa1f-0800-9191-11e4-012d1540cb8e", "Parrot - A1F");              // handle 0x7F
         attributes.put("9a66fb01-0800-9191-11e4-012d1540cb8e", "Parrot - B01"); // + complete range to B1F (handle 0x92-0xEF)
         attributes.put("9a66fb0e-0800-9191-11e4-012d1540cb8e", "Parrot - B0E/BC-BD"); // handle 0xBC
-        attributes.put("9a66fb0f-0800-9191-11e4-012d1540cb8e", "Parrot - B0F/BF-C0"); // handle 0xBF-0xC0
+        attributes.put("9a66fb0f-0800-9191-11e4-012d1540cb8e", "Parrot Battery - B0F/BF-C0"); // handle 0xBF-0xC0
         attributes.put("9a66fb1b-0800-9191-11e4-012d1540cb8e", "Parrot - B1B/E3-E4"); // handle 0xE3
         attributes.put("9a66fb1c-0800-9191-11e4-012d1540cb8e", "Parrot - B1C/E6-E7"); // handle 0xE6
         attributes.put("9a66fb1f-0800-9191-11e4-012d1540cb8e", "Parrot - B1F");

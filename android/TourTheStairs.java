@@ -35,9 +35,36 @@ public class TourTheStairs extends Thread {
         mGattCharacteristics = gattCharacteristics;
     }
 
+    public void sleep( int ms ) {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     public void init() {
         // note at at least BD characteristics notification is "must have" otherwise it does not start
-        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb0e-0800-9191-11e4-012d1540cb8e"), true);
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb0f-0800-9191-11e4-012d1540cb8e"), true); // 0xCO
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb0e-0800-9191-11e4-012d1540cb8e"), true); // 0xBD
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb1b-0800-9191-11e4-012d1540cb8e"), true); // 0xE4
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb1c-0800-9191-11e4-012d1540cb8e"), true); // 0xE7
+        sleep( 50 );
+
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd22-0800-9191-11e4-012d1540cb8e"), true); // 0x113
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd23-0800-9191-11e4-012d1540cb8e"), true); // 0x116
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd24-0800-9191-11e4-012d1540cb8e"), true); // 0x119
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd52-0800-9191-11e4-012d1540cb8e"), true); // 0x123
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd53-0800-9191-11e4-012d1540cb8e"), true); // 0x126
+        sleep( 50 );
+        mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd54-0800-9191-11e4-012d1540cb8e"), true); // 0x129
+        sleep( 50 );
         // TODO start all available notifications
 
         for( int i=0; i < 20; i++){
