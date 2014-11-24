@@ -42,6 +42,18 @@ public class TourTheStairs extends Thread {
             e.printStackTrace();
         }
     }
+
+    public void setAllNotification( Boolean enable ) {
+        for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
+            for( BluetoothGattCharacteristic characteristic : myList) {
+                int charaProp = characteristic.getProperties();
+                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                    mBluetoothLeService.setCharacteristicNotification(characteristic, enable);
+                    sleep(50);
+                }
+            }
+    }
+
     public void init() {
         // note at at least BD characteristics notification is "must have" otherwise it does not start
         mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fb0f-0800-9191-11e4-012d1540cb8e"), true); // 0xCO
@@ -64,8 +76,9 @@ public class TourTheStairs extends Thread {
         mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd53-0800-9191-11e4-012d1540cb8e"), true); // 0x126
         sleep( 50 );
         mBluetoothLeService.setCharacteristicNotification(uuid2characteristics("9a66fd54-0800-9191-11e4-012d1540cb8e"), true); // 0x129
-        sleep( 50 );
+        sleep(50);
         // TODO start all available notifications
+//        setAllNotification(true);
 
         for( int i=0; i < 20; i++){
             BluetoothGattCharacteristic characteristics;
