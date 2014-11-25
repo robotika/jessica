@@ -109,7 +109,7 @@ public class DeviceControlActivity extends Activity {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                displayData(intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
@@ -249,9 +249,12 @@ public class DeviceControlActivity extends Activity {
         });
     }
 
-    private void displayData(String data) {
+    private void displayData(byte[] data) {
         if (data != null) {
-            mDataField.setText(data);
+            mDataField.setText("Data IN");
+            if( mTourTheStairs != null ){
+                mTourTheStairs.newInputs( data );
+            }
         }
     }
 

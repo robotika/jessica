@@ -19,6 +19,8 @@ public class TourTheStairs extends Thread {
     private int mMotorCounter = 1;
     private int mSettingsCounter = 1;
     private int mEmergencyCounter = 1;
+    private byte mBattery = -1; // unknown
+    private byte mStatus = -1; // unknown
 
     private final BluetoothGattCharacteristic uuid2characteristics(String myUuid) {
         for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
@@ -204,14 +206,53 @@ public class TourTheStairs extends Thread {
         return !mShouldRun;
     }
 
-    public void run() {
+    public void newInputs( byte[] data ) {
+        if( data.length == 7 && data[3] == 5 && data[4] == 1 && data[5]==0 )
+            mBattery = data[6];
+        if( data.length == 10 && data[3] == 3 && data[4] == 1 && data[5] == 0 )
+            mStatus = data[6];
+    }
+
+    public void ver0() {
         float scale = 279.3896179199219f;
-        init();
         takeoff();
         motors( false, 0, 0, 0, 0, 0.0f, 15 ); // it has to land anyway
         if( !motors( true, 0, 100, 0, 0, scale, 6 ) ) return;
         emergencyStop();
         motors( false, 0, 0, 0, 0, 0.0f, 10 );
+        mShouldRun = false;
+    }
+
+    public void ver1() {
+        //takeoff & land
+        takeoff();
+        while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
+            motors( false, 0, 0, 0, 0, 0.0f, 1 );
+        land();
+        while( mStatus == 1 )
+            motors( false, 0, 0, 0, 0, 0.0f, 1 );
+        motors( false, 0, 0, 0, 0, 0.0f, 20 ); // it has to land anyway
+    }
+
+    public void ver2() {
+        //takeoff & land
+        takeoff();
+        while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
+            motors( false, 0, 0, 0, 0, 0.0f, 1 );
+        motors( true, 0, 0, 0, -30, 0.0f, 15 );
+        motors( true, 0, 30, 0, 0, 0.0f, 5 );
+        motors( true, 0, 15, 0, 0, 0.0f, 15 );
+        motors( false, 0, 0, 0, 0, 0.0f, 10 );
+        land();
+        while( mStatus == 1 )
+            motors( false, 0, 0, 0, 0, 0.0f, 1 );
+        motors( false, 0, 0, 0, 0, 0.0f, 20 ); // it has to land anyway
+    }
+
+
+    public void run() {
+        init();
+        ver2();
         mShouldRun = false;
     }
 }
