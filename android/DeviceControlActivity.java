@@ -254,6 +254,7 @@ public class DeviceControlActivity extends Activity {
             mDataField.setText("Data IN");
             if( mTourTheStairs != null ){
                 mTourTheStairs.newInputs( data );
+                mDataField.setText( mTourTheStairs.info() );
             }
         }
     }

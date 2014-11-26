@@ -45,6 +45,10 @@ public class TourTheStairs extends Thread {
         }
     }
 
+    public String info() {
+        return "Bat: " + mBattery + "% (" + mStatus +")";
+    }
+
     public void setAllNotification( Boolean enable ) {
         for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
             for( BluetoothGattCharacteristic characteristic : myList) {
@@ -240,9 +244,15 @@ public class TourTheStairs extends Thread {
         while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
         motors( true, 0, 0, 0, -30, 0.0f, 15 );
-        motors( true, 0, 30, 0, 0, 0.0f, 5 );
-        motors( true, 0, 15, 0, 0, 0.0f, 15 );
-        motors( false, 0, 0, 0, 0, 0.0f, 10 );
+        motors( true, 0, 0, 0, -20, 0.0f, 20 );
+        for( int i=0; i < 0; i++ ) {
+            motors( true, 0, 30, 0, 0, 0.0f, 10 );
+            motors( false, 0, 0, 0, 0, 0.0f, 2 ); // hover=stop
+        }
+        motors( true, 0, 0, 0, 30, 0.0f, 10 );
+        motors( true, 0, 100, 0, 0, 0.0f, 6 );
+        motors( false, 0, 0, 0, 0, 0.0f, 10 ); // hover=stop
+
         land();
         while( mStatus == 1 )
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
