@@ -220,14 +220,19 @@ public class TourTheStairs extends Thread {
     public void ver0() {
         float scale = 279.3896179199219f;
         takeoff();
-        motors( false, 0, 0, 0, 0, 0.0f, 15 ); // it has to land anyway
+        motors( false, 0, 0, 0, 0, 0.0f, 12 ); // it has to land anyway
         if( !motors( true, 0, 100, 0, 0, scale, 6 ) ) return;
         emergencyStop();
         motors( false, 0, 0, 0, 0, 0.0f, 10 );
-        mShouldRun = false;
     }
 
-    public void ver1() {
+    public void ver0ex() {
+        for( int i=0; i < 3; i++ )
+            ver0();
+    }
+
+
+        public void ver1() {
         //takeoff & land
         takeoff();
         while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
@@ -245,12 +250,12 @@ public class TourTheStairs extends Thread {
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
         motors( true, 0, 0, 0, -30, 0.0f, 15 );
         motors( true, 0, 0, 0, -20, 0.0f, 20 );
-        for( int i=0; i < 0; i++ ) {
+        for( int i=0; i < 3; i++ ) {
             motors( true, 0, 30, 0, 0, 0.0f, 10 );
             motors( false, 0, 0, 0, 0, 0.0f, 2 ); // hover=stop
         }
         motors( true, 0, 0, 0, 30, 0.0f, 10 );
-        motors( true, 0, 100, 0, 0, 0.0f, 6 );
+        motors( true, 0, 50, 0, 0, 0.0f, 6 );
         motors( false, 0, 0, 0, 0, 0.0f, 10 ); // hover=stop
 
         land();
@@ -262,7 +267,7 @@ public class TourTheStairs extends Thread {
 
     public void run() {
         init();
-        ver2();
+        ver0();
         mShouldRun = false;
     }
 }
