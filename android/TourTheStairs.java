@@ -21,6 +21,8 @@ public class TourTheStairs extends Thread {
     private int mEmergencyCounter = 1;
     private byte mBattery = -1; // unknown
     private byte mStatus = -1; // unknown
+    private String mDebugInfo = "";
+    private Boolean mSpiralStaircase = false;
 
     private final BluetoothGattCharacteristic uuid2characteristics(String myUuid) {
         for( ArrayList<BluetoothGattCharacteristic> myList : mGattCharacteristics )
@@ -46,7 +48,7 @@ public class TourTheStairs extends Thread {
     }
 
     public String info() {
-        return "Bat: " + mBattery + "% (" + mStatus +")";
+        return "Bat: " + mBattery + "% (" + mStatus + ") " + mDebugInfo;
     }
 
     public void setAllNotification( Boolean enable ) {
@@ -217,22 +219,31 @@ public class TourTheStairs extends Thread {
             mStatus = data[6];
     }
 
-    public void ver0() {
-        float scale = 279.3896179199219f;
+    public Boolean ver0() {
         takeoff();
-        motors( false, 0, 0, 0, 0, 0.0f, 12 ); // it has to land anyway
-        if( !motors( true, 0, 100, 0, 0, scale, 6 ) ) return;
+        if( !motors( false, 0, 0, 0, 0, 0.0f, 12 ) ) return false;
+        if( !motors( true, 0, 100, 0, 0, 0.0f, 6 ) ) return false;
         emergencyStop();
-        motors( false, 0, 0, 0, 0, 0.0f, 10 );
+        return motors( false, 0, 0, 0, 0, 0.0f, 10 );
     }
 
-    public void ver0ex() {
-        for( int i=0; i < 3; i++ )
-            ver0();
+    public Boolean approachStep() {
+        // TODO use if mSpiralStaircase
+        if( !motors( true, 0, 40, 0, 0, 0.0f, 10 ) ) return false;
+        if( !motors( true, 0, 10, 0, 0, 0.0f, 20 ) ) return false;
+        return motors( false, 0, 0, 0, 0, 0.0f, 10 );
     }
 
+    public void ver1() {
+        for( int i=0; i < 3; i++ ) {
+            if( !approachStep() )
+                break;
+            if( !ver0() )
+                break;
+        }
+    }
 
-        public void ver1() {
+    public void testTakeoffLand() {
         //takeoff & land
         takeoff();
         while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
@@ -249,13 +260,13 @@ public class TourTheStairs extends Thread {
         while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
         motors( true, 0, 0, 0, -30, 0.0f, 15 );
-        motors( true, 0, 0, 0, -20, 0.0f, 20 );
-        for( int i=0; i < 3; i++ ) {
+        motors( true, 0, 10, 0, -20, 0.0f, 20 );
+        for( int i=0; i < 0; i++ ) {
             motors( true, 0, 30, 0, 0, 0.0f, 10 );
             motors( false, 0, 0, 0, 0, 0.0f, 2 ); // hover=stop
         }
-        motors( true, 0, 0, 0, 30, 0.0f, 10 );
-        motors( true, 0, 50, 0, 0, 0.0f, 6 );
+//        motors( true, 0, 0, 0, 50, 0.0f, 10 );
+//        motors( true, 0, 100, 0, 0, 0.0f, 6 );
         motors( false, 0, 0, 0, 0, 0.0f, 10 ); // hover=stop
 
         land();
@@ -267,7 +278,8 @@ public class TourTheStairs extends Thread {
 
     public void run() {
         init();
-        ver0();
+        ver1();
         mShouldRun = false;
+        mDebugInfo = "END";
     }
 }
