@@ -221,7 +221,7 @@ public class TourTheStairs extends Thread {
 
     public Boolean ver0() {
         takeoff();
-        if( !motors( false, 0, 0, 0, 0, 0.0f, 12 ) ) return false;
+        if( !motors( false, 0, 0, 0, 0, 0.0f, 18 ) ) return false;
         if( !motors( true, 0, 100, 0, 0, 0.0f, 6 ) ) return false;
         emergencyStop();
         return motors( false, 0, 0, 0, 0, 0.0f, 10 );
@@ -235,10 +235,12 @@ public class TourTheStairs extends Thread {
     }
 
     public void ver1() {
-        for( int i=0; i < 3; i++ ) {
-            if( !approachStep() )
+        for( int i=0; i < 100; i++ ) {
+            if( !ver0() ) {
+                emergencyStop();
                 break;
-            if( !ver0() )
+            }
+            if( !approachStep() )
                 break;
         }
     }
