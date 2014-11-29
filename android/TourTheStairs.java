@@ -261,26 +261,24 @@ public class TourTheStairs extends Thread {
         takeoff();
         while( mStatus == -1 || mStatus == 0 || mStatus == 1 )
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
-        motors( true, 0, 0, 0, -30, 0.0f, 15 );
-        motors( true, 0, 10, 0, -20, 0.0f, 20 );
-        for( int i=0; i < 0; i++ ) {
-            motors( true, 0, 30, 0, 0, 0.0f, 10 );
-            motors( false, 0, 0, 0, 0, 0.0f, 2 ); // hover=stop
+        motors( true, 0, 10, 0, 0, 0.0f, 15 );
+        for( int i = 0; i < 100; i++ ) {
+            if( !motors( true, 0, 10, 0, 0, 0.0f, 20 ) )
+                break;
         }
-//        motors( true, 0, 0, 0, 50, 0.0f, 10 );
-//        motors( true, 0, 100, 0, 0, 0.0f, 6 );
-        motors( false, 0, 0, 0, 0, 0.0f, 10 ); // hover=stop
-
         land();
         while( mStatus == 1 )
+        {
+            land();
             motors( false, 0, 0, 0, 0, 0.0f, 1 );
+        }
         motors( false, 0, 0, 0, 0, 0.0f, 20 ); // it has to land anyway
     }
 
 
     public void run() {
         init();
-        ver1();
+        ver2();
         mShouldRun = false;
         mDebugInfo = "END";
     }
